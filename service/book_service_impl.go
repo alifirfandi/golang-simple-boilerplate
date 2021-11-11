@@ -30,17 +30,17 @@ func (Service BookServiceImpl) GetAllBook() (Response []model.BookResponse, Erro
 	return Response, Error
 }
 
-func (Service BookServiceImpl) GetOneBook(id string) (Response model.BookResponse, bookExist bool, Error error) {
-	Response, bookExist, Error = Service.BookRepository.GetOneBook(id)
-	return Response, bookExist, Error
+func (Service BookServiceImpl) GetOneBook(id string) (Response model.BookResponse, Error error) {
+	Response, Error = Service.BookRepository.GetOneBook(id)
+	return Response, Error
 }
 
-func (Service BookServiceImpl) DeleteBook(id string) (Response bool, bookExist bool, Error error) {
-	Response, bookExist, Error = Service.BookRepository.DeleteBook(id)
-	return Response, bookExist, Error
+func (Service BookServiceImpl) DeleteBook(id string) (Response bool, Error error) {
+	Response, Error = Service.BookRepository.DeleteBook(id)
+	return Response, Error
 }
 
-func (Service BookServiceImpl) UpdateBook(id string, Request model.BookRequest) (Response model.BookResponse, bookExist bool, Error error) {
-	Response, bookExist, Error = Service.BookRepository.UpdateBook(id, Request)
-	return Response, bookExist, Error
+func (Service BookServiceImpl) UpdateBook(id string, Request model.BookRequest) (Response model.BookResponse, Error error) {
+	Response, Error = Service.BookRepository.UpdateBook(id, Request)
+	return Response, Error
 }

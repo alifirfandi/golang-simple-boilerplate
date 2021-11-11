@@ -24,8 +24,9 @@ func (Repository BookRepositoryImpl) CreateBook(Request model.BookRequest) (Resp
 	}
 
 	if Error = Repository.Mysql.Create(&book).Error; Error != nil {
-		return Response, Error
+		return false, Error
 	}
+
 	return true, Error
 }
 
@@ -48,15 +49,16 @@ func (Repository BookRepositoryImpl) GetAllBook() (Response []model.BookResponse
 	}
 
 	Response = bookResponse
-
 	return Response, Error
 }
 
-func (Repository BookRepositoryImpl) GetOneBook(id string) (Response model.BookResponse, bookExist bool, Error error) {
+func (Repository BookRepositoryImpl) GetOneBook(id string) (Response model.BookResponse, Error error) {
 	var book entity.Book
-	Error = Repository.Mysql.Where("id = ?", id).Find(&book).Error
+	if Error = Repository.Mysql.Where("id = ?", id).First(&book).Error; Error != nil {
+		return Response, Error
+	}
 	if book.Title == "" {
-		return Response, false, Error
+		return Response, Error
 	}
 	Response.ID = book.ID
 	Response.CreatedAt = book.CreatedAt
@@ -65,31 +67,36 @@ func (Repository BookRepositoryImpl) GetOneBook(id string) (Response model.BookR
 	Response.Title = book.Title
 	Response.Year = book.Year
 
-	return Response, true, Error
+	return Response, Error
 }
 
-func (Repository BookRepositoryImpl) DeleteBook(id string) (Response bool, bookExist bool, Error error) {
+func (Repository BookRepositoryImpl) DeleteBook(id string) (Response bool, Error error) {
 	var book entity.Book
-	Error = Repository.Mysql.Where("id = ?", id).Find(&book).Error
+
+	if Error = Repository.Mysql.Where("id = ?", id).First(&book).Error; Error != nil {
+		return Response, Error
+	}
+
 	if book.Title == "" {
-		return Response, false, Error
+		return false, Error
 	}
 
 	if Error = Repository.Mysql.Delete(&book).Error; Error != nil {
-		return Response, true, Error
+		return false, Error
 	}
 
-	Response = true
-
-	return Response, true, Error
+	return true, Error
 }
 
-func (Repository BookRepositoryImpl) UpdateBook(id string, Request model.BookRequest) (Response model.BookResponse, bookExist bool, Error error) {
+func (Repository BookRepositoryImpl) UpdateBook(id string, Request model.BookRequest) (Response model.BookResponse, Error error) {
 	book := new(entity.Book)
 
-	Repository.Mysql.First(&book, id)
+	if Error = Repository.Mysql.First(&book, id).Error; Error != nil {
+		return Response, Error
+	}
+
 	if book.Title == "" {
-		return Response, false, Error
+		return Response, Error
 	}
 
 	book.Title = Request.Title
@@ -97,7 +104,7 @@ func (Repository BookRepositoryImpl) UpdateBook(id string, Request model.BookReq
 	book.Year = Request.Year
 
 	if Error = Repository.Mysql.Save(&book).Error; Error != nil {
-		return Response, true, Error
+		return Response, Error
 	}
 
 	Response.ID = book.ID
@@ -107,5 +114,5 @@ func (Repository BookRepositoryImpl) UpdateBook(id string, Request model.BookReq
 	Response.Author = book.Author
 	Response.Year = book.Year
 
-	return Response, true, Error
+	return Response, Error
 }

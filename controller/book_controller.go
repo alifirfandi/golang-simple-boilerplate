@@ -60,19 +60,10 @@ func (Controller BookController) AllBook(c *fiber.Ctx) error {
 }
 
 func (Controller BookController) OneBook(c *fiber.Ctx) error {
-	response, bookExist, err := Controller.BookService.GetOneBook(c.Params("id"))
+	response, err := Controller.BookService.GetOneBook(c.Params("id"))
 
 	if err != nil {
 		return exception.ErrorHandler(c, err)
-	}
-
-	if !bookExist {
-		return c.Status(404).JSON(model.Response{
-			Code:   404,
-			Status: "NOT_FOUND",
-			Data:   nil,
-			Error:  nil,
-		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(model.Response{
@@ -84,19 +75,10 @@ func (Controller BookController) OneBook(c *fiber.Ctx) error {
 }
 
 func (Controller BookController) DeleteBook(c *fiber.Ctx) error {
-	response, bookExist, err := Controller.BookService.DeleteBook(c.Params("id"))
+	response, err := Controller.BookService.DeleteBook(c.Params("id"))
 
 	if err != nil {
 		return exception.ErrorHandler(c, err)
-	}
-
-	if !bookExist {
-		return c.Status(404).JSON(model.Response{
-			Code:   404,
-			Status: "NOT_FOUND",
-			Data:   nil,
-			Error:  nil,
-		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(model.Response{
@@ -113,7 +95,7 @@ func (Controller BookController) UpdateBook(c *fiber.Ctx) error {
 		return exception.ErrorHandler(c, err)
 	}
 
-	response, bookExist, err := Controller.BookService.UpdateBook(c.Params("id"), model.BookRequest{
+	response, err := Controller.BookService.UpdateBook(c.Params("id"), model.BookRequest{
 		Author: request.Author,
 		Title:  request.Title,
 		Year:   request.Year,
@@ -121,15 +103,6 @@ func (Controller BookController) UpdateBook(c *fiber.Ctx) error {
 
 	if err != nil {
 		return exception.ErrorHandler(c, err)
-	}
-
-	if !bookExist {
-		return c.Status(404).JSON(model.Response{
-			Code:   404,
-			Status: "NOT_FOUND",
-			Data:   nil,
-			Error:  nil,
-		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(model.Response{
